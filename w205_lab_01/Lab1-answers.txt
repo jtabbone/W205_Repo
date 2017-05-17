@@ -1,0 +1,41 @@
+--------------------------------
+Q1: What is the difference between EBS and S3?
+
+S3 is a general cloud based file storage service.  You can access data stored in S3 (Simple Storage Service) via a web service call from an EC2 istance or other machine connected to the internet.  Data stored in S3 is backed up, versioned, and replicated across multiple servers.  S3 provides security features such as ACLs and identity management services.  
+
+
+EBS (Elastic Block Storage) is a storage service available to EC2 instances.  It is similar to NFS for the amazon cloud in that an EC2 instance can mount an EBS volume, however an EBS Volume can only be attached to one EC2 instance at a time.  The EBS Volume is seperate from the EC2 instance, insuring that data can persist if an instance fails. 
+--------------------------------
+
+Q2: When would you consider a cloud infrastructure for your data science tasks?
+
+If you don't want to comimt to purchasing hardware and software
+To quickly set up and tear down an expirement
+If you need to scale data up or down without incuring storage /computing cost
+If you collect data from different regions and need a local presence
+If you need to run multiple expirements at the same time
+
+Basically, to avoid the investment of running a data center.
+
+--------------------------------
+Q3: What is the difference between spot instances and reserved instances?
+
+A spot instance is offered by Amazon to sell currently unused capacity.  When there is extra availbility not paid for by the on-demand or reserved market, the capacity is sold at a discount on the spot market.  Users can bid on capacity hours and win capacity by providing the best bid.  If that bid is later exceeded by a better one,the instance is interrupted and the capacity is transfered to the winner.  (This is so cool... I worked at the American Stock Exchange andNew York Stock Exchange for many years,  This is equivilant to the BBO (Best Bid/Offer) except you can't sell capacity )
+
+Reserved instances are offered by Amazon to users who can make a long term comitment for capacity.  If you can commit between 1 and 3 years, Amazon will sell you those instances for a discount.
+
+--------------------------------
+Q4: List the names of four software packages installed on the UCB AMI
+
+Here are 4 from 
+
+yum list installed
+
+that look interesting:
+    
+hadoop.x86_64      
+hive.noarch 
+postgres-xl92.x86_64     
+python.x86_64        
+
+--------------------------------
