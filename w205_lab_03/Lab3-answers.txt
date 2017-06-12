@@ -3,101 +3,27 @@ w205-4
 Summer 2017
 Lab 3
 
+Q1: List the execution time of the weblog aggregation query for Hive, SparkSQL, and SparkSQL on Parquet.
+A1: 
+Hive: Time taken: 49.651 seconds, Fetched: 50 row(s)
+SparkSQL: Time taken: 2.328 seconds, Fetched 50 row(s)
+Parquet: Time taken: 1.998 seconds, Fetched 50 row(s)
+----------------------------------------------------------
 
-------------------------------------------------------------------------------
-Q1: What is the output of \dt?
-A1:  \dt (descrie tables) shows a list of all the tables in the current database with ownership, type and schema visibility information
-dvdrental=# \dt
-              List of relations
- Schema |       Name       | Type  |  Owner   
---------+------------------+-------+----------
- public | actor            | table | postgres
- public | address          | table | postgres
- public | category         | table | postgres
- public | city             | table | postgres
- public | country          | table | postgres
- public | customer         | table | postgres
- public | film             | table | postgres
- public | film_actor       | table | postgres
- public | film_category    | table | postgres
- public | inventory        | table | postgres
- public | language         | table | postgres
- public | payment          | table | postgres
- public | payment_p2007_01 | table | postgres
- public | payment_p2007_02 | table | postgres
- public | payment_p2007_03 | table | postgres
- public | payment_p2007_04 | table | postgres
- public | payment_p2007_05 | table | postgres
- public | payment_p2007_06 | table | postgres
- public | rental           | table | postgres
- public | staff            | table | postgres
- public | store            | table | postgres
-(21 rows)
+ Q2: How many jobs does Hive launch? Does SparkSQL launch jobs?
+ A2: 
+ Hive: 2 map-reduce jobs.
+ SparkSQL: 
 
+Q3: Write a query which joins weblogs_parquet to user_info and counts the top 5 locations. List the locations.
+A3:
+lab03=# SELECT location, count(location) FROM user_info INNER JOIN weblogs_schema ON weblogs_schema.user_id = user_info.user_id GROUP BY location ORDER BY count(location) DESC LIMIT 5;
 
-------------------------------------------------------------------------------
-Q2: What is the schema for the customer table?
-A2: The schema is a model of the customer data.  IIt describes the fields and types of each item that we use to model a customer.
-
-Additionally,  \dt provides index information, foreign key info, who referenes this table, and triggers to the table (code that is executed when a certain activities occur onthe table
-)
-dvdrental-# \d customer                                       
-Table "public.customer"
-   Column    |            Type             |                           Modifiers   
-                         
--------------+-----------------------------+---------------------------------------
--------------------------
- customer_id | integer                     | not null default nextval('customer_cus
-tomer_id_seq'::regclass)
- store_id    | smallint                    | not null
- first_name  | character varying(45)       | not null
- last_name   | character varying(45)       | not null
- email       | character varying(50)       | 
- address_id  | smallint                    | not null
- activebool  | boolean                     | not null default true
- create_date | date                        | not null default ('now'::text)::date
- last_update | timestamp without time zone | default now()
- active      | integer                     | 
-
-
-------------------------------------------------------------------------------
-Q3: What similarities do you see in the explain plains for these 3 queries?
-A3:  The three plans do not share a lot of data points, but structurally they have some things in common.
-
-All three will perform a SEQUENTIAL SCAN on the tables, meaning it will scan all rows of the tables in question (customer or payment)
-
-The estimated startup cost of all queries os 0, which is a little misleading.  It is the cost to process the data for display after it has been retrieved.  So if you added an 'order by non-index field' clause, it would add some expense.
-
-The estimated total cost (the number after 0..) is the total cost to conduct the query.
-
-The rows figure estimates how many rows the query will output
-q1 = 599
-q2 = 599
-q3 = 3600
-
-Width indicates an estimated byte count of a returned row
-
-The two queries against the payment table have a where clause, and thus generate an additionsl 'filter'.  the payment table is actually a partitioned table that has rules to direct queries and updates to seperate date-based payment tables.  Nothing but meta-data is held in the payment table itself, querying 'payment' will actually query it's 6 inhereted tables. 
-
-
-------------------------------------------------------------------------------
-Q4: What is the difference between the plans for the Partitioned table and the union query? Why do you think this difference exists?
-A4:  The plan expects the partitioned table to respond faster.  
-
-Union:  HashAggregate  (cost=127.26..129.76 rows=200 width=13)
-Partition: HashAggregate  (cost=103.99..106.49 rows=200 width=11)
-
-It looks like the partition plan first visits the payment table, and by virtue of the partition being set up correctly (i.e. Sorcery...) collects enough information to search the 2 appropriate tables.  There is only one query here
-
-The Union plan queries against the correct tables first to collect the 1158 target rows.  This method shows that it is less preferable because you have to know explicitly which tables to query.  Once that target set is created, it executes another query against the set to return everything.
-
-Partioning is an optimization built into the RDBMS.  I imagine that the choice of HashAgregate search technique is related to the fact that payment is partioned.
-
-------------------------------------------------------------------------------
-Q5: What join algorithm is used for the inner join?
-
-First, what *can't* be going on is what is described in the postgres docs.  The idea behind a join is that we compare each row in table A with some descriminator(s) in table B, and return the matching fields.  The problem is size, if table A has millions of rows, and we have 100k descriminators in table B, there will be over 100 million operations.
-
-Instead, the execution plan and some digging suggest that first customers are scanned and read into a hash structure, some kind of structure that maps their id directly to the location of the record so it can be retrieved in O(1) time.  Then payments are scanned once, and each row checks in O(1) time whether there is a corresponding matching customer record.  Funally, the fields from the matches are returned.
-
-I think that customer is hashed first because it is the smaller of the two and it is more expensive to put something into a hash table than take it out. However I wonder whether this isn't special case.  Since payment is a partitioned table, I think that it is already hashed.  So despite the fact that there are more than ten times as many payment records as customers, if payments is already hashed perhaps we could just scan the customer ids against it.
+   location   | count 
+--------------+-------
+ La Fayette   |    98
+ Leeds        |    94
+ Blountsville |    92
+ Hayden       |    90
+ Hamilton     |    90
+(5 rows)
