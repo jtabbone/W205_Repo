@@ -1,0 +1,30 @@
+John V. Tabbone
+w205-4 
+Summer 2017
+Lab 4
+
+Submission 1:
+>>> crimedata=sc.textFile("file:///data/datasets/Crimes_-_2001_to_present.csv")
+>>> print crimedata.count()
+5862796                                                                         
+>>> noHeaderCrimedata = crimedata.zipWithIndex().filter(lambda (row,index): index > 0).keys()
+>>> assaults = noHeaderCrimedata.filter(lambda x: "ASSLT")                      
+>>> assaults.taak(5)    
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'PipelinedRDD' object has no attribute 'taak'
+>>> assaults.take(5)
+[u'10184515,HY372204,08/06/2015 11:55:00 PM,033XX W DIVERSEY AVE,2027,NARCOTICS,POSS: CRACK,STREET,true,false,1412,014,35,22,18,1153440,1918377,2015,08/13/2015 12:57:42 PM,41.931870591,-87.711546895,"(41.931870591, -87.711546895)"', u'10184607,HY372206,08/06/2015 11:55:00 PM,035XX S RHODES AVE,0486,BATTERY,DOMESTIC BATTERY SIMPLE,APARTMENT,false,true,0212,002,4,35,08B,1180132,1881331,2015,08/13/2015 12:57:42 PM,41.82964147,-87.614598779,"(41.82964147, -87.614598779)"', u'10190430,HY374464,08/06/2015 11:50:00 PM,047XX W HARRISON ST,0430,BATTERY,AGGRAVATED: OTHER DANG WEAPON,GAS STATION,false,false,1131,011,24,25,04B,1144626,1896881,2015,08/13/2015 12:57:42 PM,41.873054046,-87.744479572,"(41.873054046, -87.744479572)"', u'10185476,HY372534,08/06/2015 11:50:00 PM,030XX W FLETCHER ST,0620,BURGLARY,UNLAWFUL ENTRY,RESIDENCE-GARAGE,false,false,1411,014,33,21,05,1155716,1920830,2015,08/13/2015 12:57:42 PM,41.938556204,-87.703116637,"(41.938556204, -87.703116637)"', u'10184561,HY372224,08/06/2015 11:50:00 PM,034XX S RACINE AVE,0820,THEFT,$500 AND UNDER,PARKING LOT/GARAGE(NON.RESID.),true,false,0913,009,11,60,06,1168866,1881886,2015,08/13/2015 12:57:42 PM,41.831415654,-87.655917306,"(41.831415654, -87.655917306)"']
+
+>>> assault_tuples = assaults.map(lambda x:(x.split(",")[0],x.split(",")[1:]))
+>>> assault_tuples.first()
+(u'10184515', [u'HY372204', u'08/06/2015 11:55:00 PM', u'033XX W DIVERSEY AVE', u'2027', u'NARCOTICS', u'POSS: CRACK', u'STREET', u'true', u'false', u'1412', u'014', u'35', u'22', u'18', u'1153440', u'1918377', u'2015', u'08/13/2015 12:57:42 PM', u'41.931870591', u'-87.711546895', u'"(41.931870591', u' -87.711546895)"'])
+
+Submission 2:
+>>> results = sqlContext.sql('select count(*) from Web_Session_Log where REFERERURL = "http://www.ebay.com" ')
+>>> results.show()
++----+                                                                          
+| _c0|
++----+
+|3943|
++----+
