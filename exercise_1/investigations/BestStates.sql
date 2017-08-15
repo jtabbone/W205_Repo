@@ -1,0 +1,1 @@
+select state, sum(score) as agg_score from effective_care_state_new GROUP BY state ORDER BY agg_score DESC limit 10;

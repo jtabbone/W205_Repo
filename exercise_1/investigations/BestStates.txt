@@ -1,0 +1,15 @@
+Similar to the way hospitals were calculated, The best states will provide a number of procedures to a large number of people and return the highest scores per procedure.  This is represented by summing the scores per state.  
+
+Total MapReduce CPU Time Spent: 6 seconds 860 msec
+OK
+DC	8171.0
+MD	7831.0
+NY	7641.0
+CA	7586.0
+CT	7550.0
+DE	7513.5
+NM	7498.5
+NJ	7436.5
+NV	7333.0
+MA	7142.5
+Time taken: 46.3 seconds, Fetched: 10 row(s)

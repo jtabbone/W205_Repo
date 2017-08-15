@@ -1,0 +1,39 @@
+Select the scores for each procedure and find the total variance for the column.
+The below formated output has the form:
+
+Measure_name
+Variance Count Min Max Mean Std
+
+
+Total MapReduce CPU Time Spent: 12 seconds 270 msec
+OK
+
+Median Time from ED Arrival to ED Departure for Admitted ED Patients	
+20147.57397597308	4656	0	97	205.10524054982818	141.94215010338922
+
+Admit Decision Time to ED Departure Time for Admitted Patients	
+4717.521853660729	4656	0	99	73.97358247422668.68421837409763
+
+Median Time from ED Arrival to ED Departure for Discharged ED Patients	
+4427.249502539032	4111	0	99	116.30454877158841	66.53757962639632
+
+Aspirin Prescribed at Discharge	
+2433.883395801233	4656	0	99	46.767396907216494	49.334403774660466
+
+Venous Thromboembolism Patients Receiving Unfractionated Heparin with Dosages/Platelet Count Monitoring by Protocol or Nomogram
+2418.4058730337906	4656	0	99	43.39819587628866	49.17729021645856
+
+Statin Prescribed at Discharge	
+2387.3017449309777	4656	0	99	45.86168384879725	48.86002194975948
+
+Discharged on Antithrombotic Therapy	
+2385.821939054729	4656	0	99	56.606743986254294	48.84487628252045
+
+Antithrombotic Therapy By End of Hospital Day 2	
+2353.065283054932	4656	0	99	56.169673539518904	48.50840425178849
+Aspirin at Arrival	
+2345.033217061383	4111	0	99	49.02894672828995	48.425543022885996
+Assessed for Rehabilitation	
+2320.3779352806328	4656	0	99	56.416666666666664	48.17030138249742
+Time taken: 56.525 seconds, Fetched: 10 row(s)
+
