@@ -72,24 +72,27 @@ do
     echo ' varchar(255) );' >> ${hospital_csv[$index]}.sql
 
     # Create command to create database
-    echo 'CREATE DATABASE IF NOT EXISTS HOSPITAL_COMPARE' > $OP_PATH/create_db.sql 
+    echo 'CREATE DATABASE IF NOT EXISTS HOSPITAL_COMPARE;' > $OP_PATH/create_db.sql 
 
     # Create command to drop all tables
-    echo "DROP TABLE HOSPITAL_COMPARE.${hospital_csv[$index]}" >> $OP_PATH/drop_tables.sql
+    echo "DROP TABLE HOSPITAL_COMPARE.${hospital_csv[$index]};" >> $OP_PATH/drop_tables.sql
 
     # Use header to create ddl file
-    echo "CREATE EXTERNAL TABLE HOSPITAL_COMPARE.${hospital_csv[$index]} (" >> ${hospital_csv[$index]}_create_table.ddl.sql
-    cat ${hospital_csv[$index]}.header | sed 's/"//g' | sed 's/,/ string,\n/g' >> ${hospital_csv[$index]}_create_table.ddl.sql
-    echo " string )" >> ${hospital_csv[$index]}_create_table.ddl.sql
-    echo "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' WITH SERDEPROPERTIES ("  >> ${hospital_csv[$index]}_create_table.ddl.sql
-    echo ' "separatorChar" = ","'',' >> ${hospital_csv[$index]}_create_table.ddl.sql
+    hdfs dfs -mkdir /user/w205/hospital_compare/${hospital_csv[$index]}
+
+    echo "CREATE EXTERNAL TABLE HOSPITAL_COMPARE.${hospital_csv[$index]} (" >> ${hospital_csv[$index]}.ddl
+    cat ${hospital_csv[$index]}.header | sed 's/"//g' | sed 's/,/ string,\n/g' >> ${hospital_csv[$index]}.ddl
+    echo " string )" >> ${hospital_csv[$index]}.ddl
+    echo "ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde' WITH SERDEPROPERTIES ("  >> ${hospital_csv[$index]}.ddl
+    echo ' "separatorChar" = ","'',' >> ${hospital_csv[$index]}.ddl
     # LOL Those quotes read double-single-double single-double-single double-single-double
     # In essence, I alternate " ' " for a single quote or ' " ' for a double quote  and concatanate characters 
-    echo ' "quoteChar" = ' "'"'"'"'" ','   >> ${hospital_csv[$index]}_create_table.ddl.sql
-    echo ' "escapeChar" = '"'"'\''\'"'"  >> ${hospital_csv[$index]}_create_table.ddl.sql
-    echo ' ) STORED AS TEXTFILE '>> ${hospital_csv[$index]}_create_table.ddl.sql
-    echo 'LOCATION /user/w205/hospital_compare/'${hospital_csv[$index]}_create_table.csv;  >> ${hospital_csv[$index]}_create_table.ddl.sql
- #   sed -i 's/ string,$/ string )/g' ${hospital_csv[$index]}_create_table.ddl.sql
+    echo ' "quoteChar" = ' "'"'"'"'" ','   >> ${hospital_csv[$index]}.ddl
+    echo ' "escapeChar" = '"'"'\''\'"'"  >> ${hospital_csv[$index]}.ddl
+    echo ' ) STORED AS TEXTFILE '>> ${hospital_csv[$index]}.ddl
+    # Funny but I cant get it working properly by including the file name in the path, only a directory
+    # and if all the files are in the same directory, the ddl runs but does not return correct queries
+    echo 'LOCATION ' "'""/user/w205/hospital_compare/${hospital_csv[$index]}/""';"  >> ${hospital_csv[$index]}.ddl
 done
 
 # remove tmp files
@@ -102,11 +105,13 @@ rm *.tmp
 echo "Loading files to hdfs"
 cd $DATA_SETS
 cd $HOSPITAL_FILES
-for file in *.csv; do
-	echo "moving file: "$file
-	su w205 -c "hdfs dfs -put /data/dataets/Hospital_Revised_Flatfiles/$file /user/w205/hospital_compare/$file"
+
+for index in ${!hospital_csv[*]}
+do
+	echo "moving file: ${hospital_csv[$index]}"
+	hdfs dfs -put /data/datasets/Hospital_Revised_Flatfiles/${hospital_csv[$index]}.csv /user/w205/hospital_compare/${hospital_csv[$index]}/${hospital_csv[$index]}.csv
 done
 
 # Cat .ddl.sql files to make one
-cat *.ddl.sql >> hive_base_ddl.sql
+cat *.ddl >> hive_base_ddl.ddl
 
