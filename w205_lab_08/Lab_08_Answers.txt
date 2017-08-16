@@ -1,0 +1,31 @@
+John V. Tabbone
+w205 Sec 4
+Lab 08
+
+Submission 1
+Q:  How many rows are missing a value in the "State" column? Explain how you came up with the number.
+A:  5377 rows are missing a value in theState column.  These are indicated as 'blank' in the facet window.
+
+Submission 2
+Q: How many rows with missing ZIP codes do you have?
+A: 4362 blank rows
+
+Submission 3
+Q: If you consider all ZIP codes less than 99999 to be valid, how many valid and invalid ZIP codes do you have, respectively?
+A:  Create column: if (value < 99999, 'VALID','INVALID')
+INVALID = 4379
+VALID = 380119
+
+Submission 4
+Q: Change the radius to 3.0. What happens? Do you want to merge any of the resulting matches?
+A: When you increase the radius to 3.0 it includes 'Tajikistan' and 'Pakistan' as well as 'Indonesia' and 'Micronesia'.  These are correct countries and should not be merged.
+
+Submission 5
+Q: Change the block size to 2. Give two examples of new clusters that may be worth merging.
+A: Canada, Candaa, Cnaada and California, Calfiornia, and Cailfornia
+
+Submission 6
+Q: Explain in words what happens when you cluster the "place" column, and why you think that happened. What additional functionality could OpenRefine provide to possibly deal with the situation?
+
+A: The process takes a very long time to complete.  It has yet to complete for me.  OpenRefine could include a status indicator showing you the estimated time to completion.  I imagine it took so long because each cell is composed of several words, which increases the dimensionality of the grid used to suport knn by orders of magnitude.
+
