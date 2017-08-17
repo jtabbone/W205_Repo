@@ -1,0 +1,6 @@
+John V. Tabbone
+w205 Sec 4
+Lab 07
+
+Submission 
+Notice that querying the distinct number and total number of productid yields the same quantity results.  It looks like there are ~400k unique product IDs, so there is no top ten.
