@@ -1,0 +1,219 @@
+
+
+Question 1:
+What is the shortest path between 'DR. STRANGE/STEPHEN' and 'DR. DOOM/VICTOR VON'?
+
+The shortest path is 1, they both appeared together.
+
+MATCH p=(strange:Hero {name: 'DR. STRANGE/STEPHEN'})-[:APPEARED*0..2]-(doom:Hero {name: 'DR. DOOM/VICTOR VON'})
+    RETURN p, length(p)
+    ORDER BY length(p)
+LIMIT 1
+
+╒══════════════════════════════════════════════════════════════════════╤═══════════╕
+│"p"                                                                   │"length(p)"│
+╞══════════════════════════════════════════════════════════════════════╪═══════════╡
+│[{"name":"DR. STRANGE/STEPHEN","degree":777},{"w":8},{"name":"DR. DOOM│1          │
+│/VICTOR VON","degree":441}]                                           │           │
+└──────────────────────────────────────────────────────────────────────┴───────────┘
+
+
+2. List the 5 shortest paths between 'DR. STRANGE/STEPHEN' and 'DR. DOOM/VICTOR VON'.
+
+MATCH p=(strange:Hero {name: 'DR. STRANGE/STEPHEN'})-[:APPEARED*0..2]-(doom:Hero {name: 'DR. DOOM/VICTOR VON'})
+    RETURN p, length(p)
+    ORDER BY length(p)
+LIMIT 5
+
+╒══════════════════════════════════════════════════════════════════════╤═══════════╕
+│"p"                                                                   │"length(p)"│
+╞══════════════════════════════════════════════════════════════════════╪═══════════╡
+│[{"name":"DR. STRANGE/STEPHEN","degree":777},{"w":8},{"name":"DR. DOOM│1          │
+│/VICTOR VON","degree":441}]                                           │           │
+├──────────────────────────────────────────────────────────────────────┼───────────┤
+│[{"name":"DR. STRANGE/STEPHEN","degree":777},{"w":12},{"name":"DR. DOO│1          │
+│M/VICTOR VON","degree":441}]                                          │           │
+├──────────────────────────────────────────────────────────────────────┼───────────┤
+│[{"name":"DR. STRANGE/STEPHEN","degree":777},{"w":3},{"name":"CAPTAIN │2          │
+│BRITAIN/BRIA","degree":327},{"name":"CAPTAIN BRITAIN/BRIA","degree":32│           │
+│7},{"w":2},{"name":"DR. DOOM/VICTOR VON","degree":441}]               │           │
+├──────────────────────────────────────────────────────────────────────┼───────────┤
+│[{"name":"DR. STRANGE/STEPHEN","degree":777},{"w":3},{"name":"CAPTAIN │2          │
+│BRITAIN/BRIA","degree":327},{"name":"CAPTAIN BRITAIN/BRIA","degree":32│           │
+│7},{"w":1},{"name":"DR. DOOM/VICTOR VON","degree":441}]               │           │
+├──────────────────────────────────────────────────────────────────────┼───────────┤
+│[{"name":"DR. STRANGE/STEPHEN","degree":777},{"w":1},{"name":"REDWING"│2          │
+│,"degree":175},{"name":"REDWING","degree":175},{"w":1},{"name":"DR. DO│           │
+│OM/VICTOR VON","degree":441}]                                         │           │
+└──────────────────────────────────────────────────────────────────────┴───────────┘
+
+
+3. List 5 Friends of Friends of 'COLOSSUS II/PETER RA' with the most connections.
+
+MATCH (colusus:Hero { name: 'COLOSSUS II/PETER RA' })-[:APPEARED*2..2]-(friend_of_friend)
+WHERE NOT (colusus)-[:APPEARED]-(friend_of_friend)
+AND friend_of_friend.name <> 'COLOSSUS II/PETER RA'
+RETURN friend_of_friend.name, COUNT(*)
+ORDER BY COUNT(*) DESC , friend_of_friend.name
+LIMIT 5
+
+
+Table
+Text
+Code
+╒═══════════════════════╤══════════╕
+│"friend_of_friend.name"│"COUNT(*)"│
+╞═══════════════════════╪══════════╡
+│"WONG"                 │453       │
+├───────────────────────┼──────────┤
+│"MOONSTONE II/KARLA S" │370       │
+├───────────────────────┼──────────┤
+│"CARTER, PEGGY"        │367       │
+├───────────────────────┼──────────┤
+│"POWER MAN/ERIK JOSTE" │350       │
+├───────────────────────┼──────────┤
+│"KINGPIN/WILSON FISK"  │342       │
+└───────────────────────┴──────────┘
+
+
+4. Visualize 10 Friends of friends for 'IRON MAN/TONY STARK'.
+
+MATCH (peter:Hero { name: 'IRON MAN/TONY STARK' })-[:APPEARED*2..2]-(friend_of_friend)
+    WHERE NOT (peter)-[:APPEARED]-(friend_of_friend)
+    AND friend_of_friend.name <> 'IRON MAN/TONY STARK'
+    RETURN friend_of_friend
+LIMIT 10
+
+╒═══════════════════════════════════════════╕
+│"friend_of_friend"                         │
+╞═══════════════════════════════════════════╡
+│{"name":"BARTOS","degree":16}              │
+├───────────────────────────────────────────┤
+│{"name":"MIMIC/CALVIN RANKIN","degree":89} │
+├───────────────────────────────────────────┤
+│{"name":"MANAT","degree":17}               │
+├───────────────────────────────────────────┤
+│{"name":"SINTARIIS","degree":5}            │
+├───────────────────────────────────────────┤
+│{"name":"DIBDEB","degree":15}              │
+├───────────────────────────────────────────┤
+│{"name":"RASPUTIN, MIKHAIL","degree":54}   │
+├───────────────────────────────────────────┤
+│{"name":"WIBBOW","degree":20}              │
+├───────────────────────────────────────────┤
+│{"name":"P'KAR","degree":14}               │
+├───────────────────────────────────────────┤
+│{"name":"LIVING MONOLITH/AHME","degree":61}│
+├───────────────────────────────────────────┤
+│{"name":"ALBERIK","degree":8}              │
+└───────────────────────────────────────────┘
+
+5.Visually discover how the Avengers grew over time from 5 to 10 members, who was added to the team, and verify connectivity.
+
+5.1
+MATCH (tony:Hero {name:'IRON MAN/TONY STARK'}) -[e:APPEARED]-> (other) <-[f:APPEARED]- (donald:Hero {name:'THOR/DR. DONALD BLAK'})
+RETURN tony, donald, other
+ORDER BY e.w DESC, f.w DESC
+LIMIT 3
+
+Members:
+Iron Man
+Thor
+Captain America
+Scarlet 
+Vision
+
+The graph is fully connected, each node has to and from connections to every other node
+
+5.2
+MATCH (tony:Hero {name:'IRON MAN/TONY STARK'}) -[e:APPEARED]-> (other) <-[f:APPEARED]- (donald:Hero {name:'THOR/DR. DONALD BLAK'})
+RETURN tony, donald, other
+ORDER BY e.w DESC, f.w DESC
+LIMIT 4
+
+The graph is fully connected, each node has to and from connections to every other node
+
+Members:
+Iron Man
+Thor
+Captain America
+Scarlet 
+Vision
+Wasp
+
+5.3
+MATCH (tony:Hero {name:'IRON MAN/TONY STARK'}) -[e:APPEARED]-> (other) <-[f:APPEARED]- (donald:Hero {name:'THOR/DR. DONALD BLAK'})
+RETURN tony, donald, other
+ORDER BY e.w DESC, f.w DESC
+LIMIT 5
+
+There are 7 nodes and 43 relationships.  Subtract 1 for Captain America being self-related, and there are 7 nodes and 42 relationships.  So each node is related to 6 others.The graph is fully connected.
+
+Members:
+Iron Man
+Thor
+Captain America
+Scarlet 
+Vision
+Wasp
+Ant Man
+
+5.4
+MATCH (tony:Hero {name:'IRON MAN/TONY STARK'}) -[e:APPEARED]-> (other) <-[f:APPEARED]- (donald:Hero {name:'THOR/DR. DONALD BLAK'})
+RETURN tony, donald, other
+ORDER BY e.w DESC, f.w DESC
+LIMIT 6
+
+There are 8 nodes and 57 relationships.  Subtract 1 for Captain America being self-related, and there are 8 nodes and 56 relationships.  So each node is related to 7 others.The graph is fully connected.
+
+Members:
+Iron Man
+Thor
+Captain America
+Scarlet 
+Vision
+Wasp
+Ant Man
+Wonder Man
+
+5.5
+MATCH (tony:Hero {name:'IRON MAN/TONY STARK'}) -[e:APPEARED]-> (other) <-[f:APPEARED]- (donald:Hero {name:'THOR/DR. DONALD BLAK'})
+RETURN tony, donald, other
+ORDER BY e.w DESC, f.w DESC
+LIMIT 7
+
+There are 9 nodes and 73 relationships.  Subtract 1 for Captain America being self-related, and there are 9 nodes and 72 relationships.  So each node is related to 8 others.The graph is fully connected.
+
+Members:
+Iron Man
+Thor
+Captain America
+Scarlet 
+Vision
+Wasp
+Ant Man
+Wonder Man
+Hawk
+
+5.6
+MATCH (tony:Hero {name:'IRON MAN/TONY STARK'}) -[e:APPEARED]-> (other) <-[f:APPEARED]- (donald:Hero {name:'THOR/DR. DONALD BLAK'})
+RETURN tony, donald, other
+ORDER BY e.w DESC, f.w DESC
+LIMIT 8
+
+There are 10 nodes and 91 relationships.  Subtract 1 for Captain America being self-related, and there are 10 nodes and 90 relationships.  So each node is related to 9 others.The graph is fully connected.
+
+Members:
+Iron Man
+Thor
+Captain America
+Scarlet 
+Vision
+Wasp
+Ant Man
+Wonder Man
+Hank
+Iron Man IV
+
+
+
