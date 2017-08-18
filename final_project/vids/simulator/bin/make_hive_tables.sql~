@@ -1,0 +1,9 @@
+CREATE DATABASE IF NOT EXISTS VIDS
+
+USE VIDS
+
+CREATE TABLE patient (
+id string,
+hospital_id string,
+name string,
+)
